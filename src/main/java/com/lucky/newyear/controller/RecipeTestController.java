@@ -5,6 +5,7 @@ import com.lucky.newyear.model.response.RecipeTestGradeRes;
 import com.lucky.newyear.model.request.RecipeTestPostReq;
 import com.lucky.newyear.model.response.RecipeTestPostRes;
 import com.lucky.newyear.service.RecipeTestService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class RecipeTestController {
     private final RecipeTestService recipeTestService;
 
     // 레시피 시험지 등록
+    @Operation(summary = "레시피 시험지 등록", description = "")
     @PostMapping //
     public ResponseEntity<RecipeTestPostRes> postRecipeTest(
             @RequestBody @Valid RecipeTestPostReq recipeTestPostReq
@@ -27,7 +29,8 @@ public class RecipeTestController {
         return ResponseEntity.status(200).body(response);
     }
 
-    // 레시피 정답 채점
+    // 레시피 점수 채점
+    @Operation(summary = "레시피 점수 채점", description = "")
     @PutMapping("/{ownerUUID}") //
     public ResponseEntity<RecipeTestGradeRes> gradeRecipeTest(
             @PathVariable final String ownerUUID,
