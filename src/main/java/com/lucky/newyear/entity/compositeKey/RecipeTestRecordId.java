@@ -1,5 +1,6 @@
 package com.lucky.newyear.entity.compositeKey;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,6 +15,9 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Embeddable
 public class RecipeTestRecordId implements Serializable {
+    @Column(name = "test_id")
     private Long testId;
-    private String masterUuid;
+
+    @Column(name = "user_uuid")
+    private String userUUID;
 }

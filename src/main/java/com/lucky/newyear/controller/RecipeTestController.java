@@ -1,7 +1,9 @@
 package com.lucky.newyear.controller;
 
-import com.lucky.newyear.model.RecipeTestPostReq;
-import com.lucky.newyear.model.RecipeTestPostRes;
+import com.lucky.newyear.model.request.RecipeTestGradeReq;
+import com.lucky.newyear.model.response.RecipeTestGradeRes;
+import com.lucky.newyear.model.request.RecipeTestPostReq;
+import com.lucky.newyear.model.response.RecipeTestPostRes;
 import com.lucky.newyear.service.RecipeTestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +17,23 @@ public class RecipeTestController {
 
     private final RecipeTestService recipeTestService;
 
-    //@Operation(summary = "", description = "")
+    // 레시피 시험지 등록
     @PostMapping //
     public ResponseEntity<RecipeTestPostRes> postRecipeTest(
             @RequestBody @Valid RecipeTestPostReq recipeTestPostReq
     ) {
         RecipeTestPostRes response = recipeTestService.postRecipeTest(recipeTestPostReq);
+
+        return ResponseEntity.status(200).body(response);
+    }
+
+    // 레시피 정답 채점
+    @PutMapping("/{ownerUUID}") //
+    public ResponseEntity<RecipeTestGradeRes> gradeRecipeTest(
+            @PathVariable final String ownerUUID,
+            @RequestBody @Valid final RecipeTestGradeReq recipeTestGradeReq
+    ) {
+        RecipeTestGradeRes response = recipeTestService.gradeRecipeTest(ownerUUID, recipeTestGradeReq);
 
         return ResponseEntity.status(200).body(response);
     }

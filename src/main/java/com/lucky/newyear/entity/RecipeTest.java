@@ -18,13 +18,10 @@ public class RecipeTest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Long id;    // 결국은 id를 이용한 검색이 될수도.
 
-    @Column(name = "room_token")
-    private String roomToken;
-
-    @Column(name = "master_uuid")
-    private String masterUuid;
+    @Column(name = "owner_uuid")
+    private String ownerUUID;
 
     @Column(name = "nickname")
     private String nickname;
@@ -33,8 +30,17 @@ public class RecipeTest {
     @Convert(converter = RecipeConverter.class)
     private Recipe recipe;
 
+    @Column(name = "tester_count")
+    private Integer testerCount;
+
     @Column(name = "created_at")
     @CreationTimestamp
     private Date createdAt;
 
+    @Version
+    private Long version;
+
+    public void increaseTesterCount() {
+        this.testerCount += 1;
+    }
 }

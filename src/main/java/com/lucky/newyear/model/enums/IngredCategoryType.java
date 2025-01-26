@@ -1,6 +1,7 @@
 package com.lucky.newyear.model.enums;
 
-public enum CategoryType {
+// 재료 카테고리
+public enum IngredCategoryType {
     BROTH("육수", 8),
     MAIN("주재료", 8),
     SUB("부재료", 8),
@@ -9,7 +10,7 @@ public enum CategoryType {
     private final String name;
     private final int typeCount;
 
-    CategoryType(String name, int typeCount) {
+    IngredCategoryType(String name, int typeCount) {
         this.name = name;
         this.typeCount = typeCount;
     }
@@ -18,10 +19,10 @@ public enum CategoryType {
         return typeCount;
     }
 
-    public static CategoryType getCategoryByName(String name) {
-        for (CategoryType category : values()) {
-            if (category.name.equals(name)) {
-                return category;
+    public static IngredCategoryType getIngredientByName(String name) {
+        for (IngredCategoryType ingredient : values()) {
+            if (ingredient.name.equals(name)) {
+                return ingredient;
             }
         }
         return null;

@@ -1,6 +1,8 @@
-package com.lucky.newyear.model;
+package com.lucky.newyear.model.request;
 
 
+import com.lucky.newyear.entity.RecipeTest;
+import com.lucky.newyear.model.Recipe;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -23,4 +25,19 @@ public class RecipeTestPostReq {
     private final List<Long> sub;
     @Size(max = 3, message = "고명 재료는 3개 이하로 선택해야 합니다.")
     private final List<Long> garnish;
+
+    public RecipeTest toEntity(String newUUID) {
+        Recipe recipe = Recipe.builder()
+                .broth(this.broth)
+                .main(this.main)
+                .sub(this.sub)
+                .garnish(this.garnish)
+                .build();
+
+        return RecipeTest.builder()
+                .ownerUUID(newUUID)
+                .nickname(this.nickname)
+                .recipe(recipe)
+                .build();
+    }
 }

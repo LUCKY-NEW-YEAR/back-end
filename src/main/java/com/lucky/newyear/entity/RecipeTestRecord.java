@@ -24,7 +24,7 @@ public class RecipeTestRecord {
     private RecipeTest recipeTest;
 
     @Column(name = "score")
-    private Long score;
+    private Integer score;
 
     @Column(name = "nickname")
     private String nickname;
