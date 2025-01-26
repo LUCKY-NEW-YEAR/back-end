@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface RecipeTestRepository extends JpaRepository<RecipeTest, Long> {
 
-    Boolean existByOwnerUUID(String ownerUUID);
-
     Optional<RecipeTest> findByOwnerUUID(String ownerUUID);
 
 

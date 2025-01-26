@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 @ToString
 public class Recipe {
-    private List<Long> broth;
-    private List<Long> main;
-    private List<Long> sub;
-    private List<Long> garnish;
+    private List<Long> yuksu;   // 육수
+    private List<Long> main;    // 주재료
+    private List<Long> sub;     // 부재료
+    private List<Long> garnish; //
 }

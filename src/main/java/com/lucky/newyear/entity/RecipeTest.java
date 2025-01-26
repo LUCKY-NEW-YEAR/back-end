@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.util.Date;
 
 @Entity
-@Table(name = "recipe_test_record")
+@Table(name = "recipe_test")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

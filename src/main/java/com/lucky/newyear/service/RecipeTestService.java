@@ -36,10 +36,10 @@ public class RecipeTestService {
     private final RecipeTestRecordRepository recipeTestRecordRepo;
 
     @Value("${newyear.share.url.base}")
-    private final String SHARE_URL_BASE;
+    private String SHARE_URL_BASE;
 
     @Value("${newyear.tester.count.max}")
-    private final Long TESTER_COUNT_MAX;
+    private Long TESTER_COUNT_MAX;
 
     public RecipeTestPostRes postRecipeTest(RecipeTestPostReq recipeTestPostReq) {
         // user의 UUID 생성

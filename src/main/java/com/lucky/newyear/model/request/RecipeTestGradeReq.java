@@ -17,7 +17,7 @@ public class RecipeTestGradeReq {
     private final String nickname;
 
     @Size(min = 1, max = 2, message = "육수는 1개만 선택할 수 있습니다.")
-    private final List<Long> broth;
+    private final List<Long> yuksu;
 
     @Size(min = 1, max = 2, message = "주 재료는 1개 이상, 2개 이하로 선택해야 합니다.")
     private final List<Long> main;
@@ -31,7 +31,7 @@ public class RecipeTestGradeReq {
 
     public Recipe getRecipe() {
         return Recipe.builder()
-                .broth(this.broth)
+                .yuksu(this.yuksu)
                 .main(this.main)
                 .sub(this.sub)
                 .garnish(this.garnish)
