@@ -28,7 +28,7 @@ public class RecipeTestGradeReq {
     @Size(max = 30, message = "전달할 메세지는 최대 30자 까지 입력 가능합니다.")
     private final String message;
 
-    public Recipe getRecipe() {
+    public Recipe toRecipe() {
         return Recipe.builder()
                 .yuksu(this.yuksu)
                 .main(this.main)

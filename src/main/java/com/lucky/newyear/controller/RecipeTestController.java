@@ -1,6 +1,7 @@
 package com.lucky.newyear.controller;
 
 import com.lucky.newyear.model.request.RecipeTestGradeReq;
+import com.lucky.newyear.model.response.RecipeTestExistRes;
 import com.lucky.newyear.model.response.RecipeTestGradeRes;
 import com.lucky.newyear.model.request.RecipeTestPostReq;
 import com.lucky.newyear.model.response.RecipeTestPostRes;
@@ -25,6 +26,16 @@ public class RecipeTestController {
             @RequestBody @Valid RecipeTestPostReq recipeTestPostReq
     ) {
         RecipeTestPostRes response = recipeTestService.postRecipeTest(recipeTestPostReq);
+
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @Operation(summary = "레시피 시험지 존재 여부 확인", description = "")
+    @GetMapping("/{ownerUUID}")  //
+    public ResponseEntity<RecipeTestExistRes> existRecipeTest(
+            @PathVariable final String ownerUUID
+    ) {
+        RecipeTestExistRes response = recipeTestService.existRecipeTest(ownerUUID);
 
         return ResponseEntity.status(200).body(response);
     }

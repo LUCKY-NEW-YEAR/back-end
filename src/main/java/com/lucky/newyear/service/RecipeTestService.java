@@ -6,6 +6,7 @@ import com.lucky.newyear.entity.RecipeTestRecord;
 import com.lucky.newyear.entity.compositeKey.RecipeTestRecordId;
 import com.lucky.newyear.model.Recipe;
 import com.lucky.newyear.model.request.RecipeTestGradeReq;
+import com.lucky.newyear.model.response.RecipeTestExistRes;
 import com.lucky.newyear.model.response.RecipeTestGradeRes;
 import com.lucky.newyear.model.request.RecipeTestPostReq;
 import com.lucky.newyear.model.response.RecipeTestPostRes;
@@ -70,6 +71,14 @@ public class RecipeTestService {
                 .build();
     }
 
+    public RecipeTestExistRes existRecipeTest(String ownerUUID) {
+        boolean isExists = recipeTestRepo.existsByOwnerUUID(ownerUUID);
+
+        return RecipeTestExistRes.builder()
+                .isExists(isExists)
+                .build();
+    }
+
     @Transactional
     public RecipeTestGradeRes gradeRecipeTest(String ownerUUID, RecipeTestGradeReq recipeTestGradeReq) {
         // 우선은 자기 자신 레시피에 접근해도 괜찮을듯.
@@ -101,7 +110,7 @@ public class RecipeTestService {
         // 점수 계산 로직
         Integer score = calculateScore(
                 recipeTest.getRecipe(),
-                recipeTestGradeReq.getRecipe()
+                recipeTestGradeReq.toRecipe()
         );
 
         // DB 저장
