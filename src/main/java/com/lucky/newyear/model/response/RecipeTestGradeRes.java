@@ -17,6 +17,8 @@ import java.util.List;
 @Builder
 public class RecipeTestGradeRes {
     // 본인 점수 계산 + 랭킹 조회 + 되면 등수도 표시 ㄱ?
+    private final String ownerUUID;
+
     private final Integer myScore;
 
     private final String title;
@@ -32,6 +34,7 @@ public class RecipeTestGradeRes {
     private final List<UserDtoForTopRank> topRankList;
 
     public static RecipeTestGradeRes of(
+            final String ownerUUID,
             final Integer myScore,
             final String title,
             final String content,
@@ -57,6 +60,7 @@ public class RecipeTestGradeRes {
                 .toList();
 
         return RecipeTestGradeRes.builder()
+                .ownerUUID(ownerUUID)
                 .myScore(myScore)
                 .title(title)
                 .content(content)

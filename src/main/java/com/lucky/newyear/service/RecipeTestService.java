@@ -145,6 +145,7 @@ public class RecipeTestService {
         List<RecipeTestRecord> topRankList = recipeTestRecordRepo.findTop4ByIdTestIdOrderByScoreDesc(recipeTest.getId());
 
         return RecipeTestGradeRes.of(
+                ownerUUID,
                 score,
                 title,
                 content,
