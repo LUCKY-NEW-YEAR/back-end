@@ -88,8 +88,6 @@ public class RecipeTestService {
                     return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
                 });
 
-        Long reqUserId = Long.valueOf(recipeTest.getTesterCount());
-
 
         // DB top Rank 조회
         try {
@@ -116,7 +114,7 @@ public class RecipeTestService {
         // DB 저장
         RecipeTestRecordId id = new RecipeTestRecordId(
                 recipeTest.getId(),
-                reqUserId
+                reqUserUUID
         );
 
         Recipe mergeRecipe = Recipe.merge(
@@ -214,7 +212,7 @@ public class RecipeTestService {
         return RecipeTestRankRes.of(recordPage);
     }
 
-    public RecipeTestGetDetailRes getRecipeTestDetail(String ownerUUID, Long findId) {
+    public RecipeTestGetDetailRes getRecipeTestDetail(String ownerUUID, String findUUID) {
         RecipeTest recipeTest = recipeTestRepo.findByOwnerUUID(ownerUUID)
                 .orElseThrow(() -> {
                     log.error("getRecipeTestDetail() 없는 테스트로의 접근입니다. ownerUUID : {}", ownerUUID);
@@ -223,11 +221,11 @@ public class RecipeTestService {
 
         Long testId = recipeTest.getId();
 
-        RecipeTestRecordId id = new RecipeTestRecordId(testId, findId);
+        RecipeTestRecordId id = new RecipeTestRecordId(testId, findUUID);
 
         RecipeTestRecord record = recipeTestRecordRepo.findById(id)
                 .orElseThrow(() -> {
-                    log.error("getRecipeTestDetail() 없는 테스트 결과로의 접근입니다. findId : {}", findId);
+                    log.error("getRecipeTestDetail() 없는 테스트 결과로의 접근입니다. findId : {}", findUUID);
                     return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
                 });
 

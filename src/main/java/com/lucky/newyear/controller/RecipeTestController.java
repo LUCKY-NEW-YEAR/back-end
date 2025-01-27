@@ -70,9 +70,9 @@ public class RecipeTestController {
     @GetMapping("/{ownerUUID}/detail")  //
     public ResponseEntity<RecipeTestGetDetailRes> getRecipeTestDetail(
             @PathVariable final String ownerUUID,
-            @RequestParam final Long findId
+            @RequestParam final String findUUID
     ) {
-        RecipeTestGetDetailRes response = recipeTestService.getRecipeTestDetail(ownerUUID, findId);
+        RecipeTestGetDetailRes response = recipeTestService.getRecipeTestDetail(ownerUUID, findUUID);
 
         return ResponseEntity.status(200).body(response);
     }

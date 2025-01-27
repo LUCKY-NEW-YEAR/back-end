@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Builder
 public class RecipeTestGetDetailRes {
-    private final Long userId;
+    private final String userUUID;
     private final Integer score;
     private final String content;
     private final String message;
@@ -45,7 +45,7 @@ public class RecipeTestGetDetailRes {
                 .toList();
 
         return RecipeTestGetDetailRes.builder()
-                .userId(record.getId().getUserId())
+                .userUUID(record.getId().getUserUUID())
                 .score(record.getScore())
                 .message(record.getMessage())
                 .yuksu(stringYuksu)

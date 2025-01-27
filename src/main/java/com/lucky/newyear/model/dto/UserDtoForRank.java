@@ -10,13 +10,13 @@ import java.util.List;
 @Getter
 @Builder
 public class UserDtoForRank {
-    private final Long userId;
+    private final String userUUID;
     private final String nickname;
     private final Integer score;
 
     public static UserDtoForRank of(RecipeTestRecord record) {
         return UserDtoForRank.builder()
-                .userId(record.getId().getUserId())
+                .userUUID(record.getId().getUserUUID())
                 .nickname(record.getNickname())
                 .score(record.getScore())
                 .build();
