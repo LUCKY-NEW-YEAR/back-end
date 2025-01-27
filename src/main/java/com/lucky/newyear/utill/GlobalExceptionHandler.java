@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(NyException.class)
-    public ResponseEntity<String> handleRuntimeException(NyException e) {
+    public ResponseEntity<String> handleNyException(NyException e) {
         log.error("잘못된 요청.", e);
         return ResponseEntity
                 .status(e.getStatus())
@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> bindExceptionHandler(final MethodArgumentNotValidException e) {
+    public ResponseEntity<String> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
         FieldError fieldError = bindingResult.getFieldError();
 

@@ -18,6 +18,6 @@ public class RecipeTestRecordId implements Serializable {
     @Column(name = "test_id")
     private Long testId;
 
-    @Column(name = "user_uuid")
-    private String userUUID;
+    @Column(name = "user_id")
+    private Long userId;
 }

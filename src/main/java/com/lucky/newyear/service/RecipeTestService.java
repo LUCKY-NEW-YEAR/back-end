@@ -1,6 +1,5 @@
 package com.lucky.newyear.service;
 
-import com.lucky.newyear.config.UserContext;
 import com.lucky.newyear.entity.RecipeTest;
 import com.lucky.newyear.entity.RecipeTestRecord;
 import com.lucky.newyear.entity.compositeKey.RecipeTestRecordId;
@@ -10,24 +9,23 @@ import com.lucky.newyear.model.enums.IngredMainType;
 import com.lucky.newyear.model.enums.IngredSubType;
 import com.lucky.newyear.model.enums.IngredYuksuType;
 import com.lucky.newyear.model.request.RecipeTestGradeReq;
-import com.lucky.newyear.model.response.RecipeTestExistRes;
-import com.lucky.newyear.model.response.RecipeTestGradeRes;
+import com.lucky.newyear.model.response.*;
 import com.lucky.newyear.model.request.RecipeTestPostReq;
-import com.lucky.newyear.model.response.RecipeTestPostRes;
 import com.lucky.newyear.repository.RecipeTestRecordRepository;
 import com.lucky.newyear.repository.RecipeTestRepository;
 import com.lucky.newyear.utill.NyException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Internal;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,32 +73,22 @@ public class RecipeTestService {
                 .build();
     }
 
-    public RecipeTestExistRes existRecipeTest(String ownerUUID) {
-        boolean isExists = recipeTestRepo.existsByOwnerUUID(ownerUUID);
-
-        return RecipeTestExistRes.builder()
-                .isExists(isExists)
-                .build();
-    }
-
     @Transactional
     public RecipeTestGradeRes gradeRecipeTest(
             final String ownerUUID,
             final RecipeTestGradeReq recipeTestGradeReq
     ) {
         // 우선은 자기 자신 레시피에 접근해도 괜찮을듯.
-        String reqUserUUID = UserContext.getUserUUID();
-
-        if (reqUserUUID == null) {
-            UUID uuid = UUID.randomUUID();
-            reqUserUUID = uuid.toString();
-        }
+        UUID uuid = UUID.randomUUID();
+        String reqUserUUID = uuid.toString();
 
         RecipeTest recipeTest = recipeTestRepo.findByOwnerUUID(ownerUUID)
                 .orElseThrow(() -> {
                     log.error("gradeRecipeTest() 없는 테스트로의 접근입니다. ownerUUID : {}", ownerUUID);
                     return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
                 });
+
+        Long reqUserId = Long.valueOf(recipeTest.getTesterCount());
 
 
         // DB top Rank 조회
@@ -128,7 +116,7 @@ public class RecipeTestService {
         // DB 저장
         RecipeTestRecordId id = new RecipeTestRecordId(
                 recipeTest.getId(),
-                reqUserUUID
+                reqUserId
         );
 
         Recipe mergeRecipe = Recipe.merge(
@@ -154,7 +142,6 @@ public class RecipeTestService {
         List<RecipeTestRecord> topRankList = recipeTestRecordRepo.findTop4ByIdTestIdOrderByScoreDesc(recipeTest.getId());
 
         return RecipeTestGradeRes.of(
-                reqUserUUID,
                 score,
                 content,
                 topRankList,
@@ -203,4 +190,47 @@ public class RecipeTestService {
         }
     }
 
+    public RecipeTestExistRes existRecipeTest(String ownerUUID) {
+        boolean isExists = recipeTestRepo.existsByOwnerUUID(ownerUUID);
+
+        return RecipeTestExistRes.builder()
+                .isExists(isExists)
+                .build();
+    }
+
+    public RecipeTestRankRes getRecipeTestRanking(String ownerUUID, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.desc("score")));
+
+        RecipeTest recipeTest = recipeTestRepo.findByOwnerUUID(ownerUUID)
+                .orElseThrow(() -> {
+                    log.error("getRecipeTestRanking() 없는 테스트로의 접근입니다. ownerUUID : {}", ownerUUID);
+                    return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+                });
+
+        Long testId = recipeTest.getId();
+
+        Page<RecipeTestRecord> recordPage = recipeTestRecordRepo.findAllByIdTestId(pageable, testId);
+
+        return RecipeTestRankRes.of(recordPage);
+    }
+
+    public RecipeTestGetDetailRes getRecipeTestDetail(String ownerUUID, Long findId) {
+        RecipeTest recipeTest = recipeTestRepo.findByOwnerUUID(ownerUUID)
+                .orElseThrow(() -> {
+                    log.error("getRecipeTestDetail() 없는 테스트로의 접근입니다. ownerUUID : {}", ownerUUID);
+                    return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+                });
+
+        Long testId = recipeTest.getId();
+
+        RecipeTestRecordId id = new RecipeTestRecordId(testId, findId);
+
+        RecipeTestRecord record = recipeTestRecordRepo.findById(id)
+                .orElseThrow(() -> {
+                    log.error("getRecipeTestDetail() 없는 테스트 결과로의 접근입니다. findId : {}", findId);
+                    return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+                });
+
+        return RecipeTestGetDetailRes.of(record, getContent(record.getScore()));
+    }
 }
