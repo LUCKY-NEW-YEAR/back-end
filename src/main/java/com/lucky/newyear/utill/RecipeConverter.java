@@ -5,8 +5,11 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 
 @Converter
+@Slf4j
 public class RecipeConverter implements AttributeConverter<Recipe, String> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -19,7 +22,8 @@ public class RecipeConverter implements AttributeConverter<Recipe, String> {
             }
             return objectMapper.writeValueAsString(recipe);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JSON 변환 오류: " + e.getMessage(), e);
+            log.error( "JSON 변환 오류: " + e.getMessage(), e);
+            throw new NyException(HttpStatus.INTERNAL_SERVER_ERROR, "서버측 오류 발생");
         }
     }
 
@@ -31,7 +35,8 @@ public class RecipeConverter implements AttributeConverter<Recipe, String> {
             }
             return objectMapper.readValue(dbData, Recipe.class);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JSON 읽기 오류: " + e.getMessage(), e);
+            log.error( "JSON 읽기 오류: " + e.getMessage(), e);
+            throw new NyException(HttpStatus.INTERNAL_SERVER_ERROR, "서버측 오류 발생");
         }
     }
 }

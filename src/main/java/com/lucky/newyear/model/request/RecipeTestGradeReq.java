@@ -18,7 +18,6 @@ public class RecipeTestGradeReq {
 
     @Size(min = 1, max = 2, message = "육수는 1개만 선택할 수 있습니다.")
     private final List<Long> yuksu;
-
     @Size(min = 1, max = 2, message = "주 재료는 1개 이상, 2개 이하로 선택해야 합니다.")
     private final List<Long> main;
     @Size(min = 1, max = 2, message = "부 재료는 1개 이상, 2개 이하로 선택해야 합니다.")

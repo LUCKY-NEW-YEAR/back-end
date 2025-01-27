@@ -38,6 +38,7 @@ public class RecipeTestPostReq {
                 .ownerUUID(newUUID)
                 .nickname(this.nickname)
                 .recipe(recipe)
+                .testerCount(0)
                 .build();
     }
 }

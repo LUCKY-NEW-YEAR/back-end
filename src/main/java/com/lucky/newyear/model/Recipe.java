@@ -1,15 +1,14 @@
 package com.lucky.newyear.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Recipe {
     private List<Long> yuksu;   // 육수
