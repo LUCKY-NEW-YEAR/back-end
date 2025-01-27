@@ -66,7 +66,7 @@ public class RecipeTestController {
         return ResponseEntity.status(200).body(response);
     }
 
-    @Operation(summary = "레시피 테스트 랭킹 목록 확인", description = "")
+    @Operation(summary = "레시피 테스트 결과 상세 조회", description = "검색 uuid 필요.")
     @GetMapping("/{ownerUUID}/detail")  //
     public ResponseEntity<RecipeTestGetDetailRes> getRecipeTestDetail(
             @PathVariable final String ownerUUID,
