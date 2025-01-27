@@ -7,31 +7,40 @@ import java.util.stream.Stream;
 
 @Getter
 public enum IngredMainType {
-    GARAE_TTEOK("가래떡", 0, 0),
-    WHOLE_TTEOK("통가래떡", 0, 0),
-    JORAENGI_TTEOK("조랭이떡", 0, 0),
-    HONEY_TTEOK("꿀떡", 0, 1),
-    KIMCHI_MANDU("김치만두", 1, 0),
-    MEAT_MANDU("고기만두", 1, 0),
-    GULRIM_MANDU("굴림만두", 1, 2);
+    GARAE(1, "가래떡", 0, 0),
+    TONGGARAE(2, "통가래떡", 0, 0),
+    JORAENG(3, "조랭이떡", 0, 0),
+    GGULDDUK(4, "꿀떡", 0, 1),
+    KIMCHI(5, "김치만두", 1, 0),
+    GOGI(6, "고기만두", 1, 0),
+    GULRIM(7, "굴림만두", 1, 2);
 
+    private static final Map<Integer, IngredMainType> intToStringMap = new HashMap<>();
+
+    static {
+        for (IngredMainType type : values()) {
+            intToStringMap.put(type.getId(), type);
+        }
+    }
+
+    private final Integer id;
     private final String descript;
     private final Integer combi1;   // 떡 3개 || 만두 3개 들어갈 경우 감점.
     private final Integer combi2;   // 꿀떡 & 굴림만두 조합
 
-    IngredMainType(String descript, Integer combi1, Integer combi2) {
+    IngredMainType(Integer id, String descript, Integer combi1, Integer combi2) {
+        this.id = id;
         this.descript = descript;
         this.combi1 = combi1;
         this.combi2 = combi2;
     }
 
-    public static IngredMainType getIngredientByDescript(String descript) {
-        for (IngredMainType ingredient : values()) {
-            if (ingredient.descript.equals(descript)) {
-                return ingredient;
-            }
-        }
-        return null;
+    public static IngredMainType fromId(int id) {
+        return intToStringMap.get(id);
+    }
+
+    public static List<IngredMainType> fromIds(List<Integer> idList) {
+        return idList.stream().map(intToStringMap::get).toList();
     }
 
     public static Integer calculMainScore(List<IngredMainType> ownersList, List<IngredMainType> testersList) {

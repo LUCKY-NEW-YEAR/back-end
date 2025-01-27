@@ -1,5 +1,6 @@
 package com.lucky.newyear.model.response;
 
+import com.lucky.newyear.entity.RecipeTestRecord;
 import com.lucky.newyear.model.dto.UserDtoForTopRank;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +14,24 @@ public class RecipeTestGradeRes {
     private final String shareUrl;
 
     private final Integer myScore;
-    private final Integer myRank;
 
     private final String content;
 
     private final List<UserDtoForTopRank> topRankList;
+
+    public static RecipeTestGradeRes of(
+            Integer myScore,
+            String content,
+            List<RecipeTestRecord> topRankList
+    ) {
+        List<UserDtoForTopRank> topRankDtoList = topRankList.stream()
+                .map(UserDtoForTopRank::of)
+                .toList();
+
+        return RecipeTestGradeRes.builder()
+                .myScore(myScore)
+                .content(content)
+                .topRankList(topRankDtoList)
+                .build();
+    }
 }

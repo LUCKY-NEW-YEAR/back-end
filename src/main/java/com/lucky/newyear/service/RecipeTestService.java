@@ -5,6 +5,10 @@ import com.lucky.newyear.entity.RecipeTest;
 import com.lucky.newyear.entity.RecipeTestRecord;
 import com.lucky.newyear.entity.compositeKey.RecipeTestRecordId;
 import com.lucky.newyear.model.Recipe;
+import com.lucky.newyear.model.enums.IngredGarnishType;
+import com.lucky.newyear.model.enums.IngredMainType;
+import com.lucky.newyear.model.enums.IngredSubType;
+import com.lucky.newyear.model.enums.IngredYuksuType;
 import com.lucky.newyear.model.request.RecipeTestGradeReq;
 import com.lucky.newyear.model.response.RecipeTestExistRes;
 import com.lucky.newyear.model.response.RecipeTestGradeRes;
@@ -26,6 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -118,10 +123,17 @@ public class RecipeTestService {
                 recipeTest.getId(),
                 reqUserUUID
         );
+
+        Recipe mergeRecipe = Recipe.merge(
+                recipeTest.getRecipe(),
+                recipeTestGradeReq.toRecipe()
+        );
+
         RecipeTestRecord recipeTestRecord = RecipeTestRecord.builder()
                 .id(id)
                 .recipeTest(recipeTest)
                 .score(score)
+                .recipe(mergeRecipe)
                 .nickname(recipeTestGradeReq.getNickname())
                 .message(recipeTestGradeReq.getMessage())
                 .build();
@@ -129,17 +141,56 @@ public class RecipeTestService {
         recipeTestRecordRepo.save(recipeTestRecord);
 
         // 점수에 맞는 문구 출력.
+        String content = getContent(score);
 
         // 랭킹(Top 4) 리스트 조회
+        List<RecipeTestRecord> topRankList = recipeTestRecordRepo.findTop4ByIdTestIdOrderByScoreDesc(recipeTest.getId());
 
-        return RecipeTestGradeRes.builder()
-                .myScore(score)
-                .build();
+        return RecipeTestGradeRes.of(
+                score,
+                content,
+                topRankList
+        );
     }
 
     private Integer calculateScore(Recipe ownerRecipe, Recipe testerRecipe) {
-        Integer score = 100;
+        Integer score = IngredYuksuType.calculYuksuScore(
+                IngredYuksuType.firstFromIds(ownerRecipe.getYuksu()),
+                IngredYuksuType.firstFromIds(testerRecipe.getYuksu())
+        );
+
+        score += IngredMainType.calculMainScore(
+                IngredMainType.fromIds(ownerRecipe.getMain()),
+                IngredMainType.fromIds(testerRecipe.getMain())
+        );
+
+        score += IngredSubType.calculSubScore(
+                IngredSubType.fromIds(ownerRecipe.getSub()),
+                IngredSubType.fromIds(testerRecipe.getSub())
+        );
+
+        score += IngredGarnishType.calculCarnishScore(
+                IngredGarnishType.fromIds(ownerRecipe.getGarnish()),
+                IngredGarnishType.fromIds(testerRecipe.getGarnish())
+        );
 
         return score;
+    }
+
+    private String getContent(Integer score) {
+        if (score >= 100) {
+            return "히든 떡국 발견 ! 서로가 놓치지 말아야 할 귀인입니다.";
+        } else if (score >= 90) {
+            return "천생연분 ! 올해도 두 분이 함께라면 모든 일이 잘 풀릴 거예요.";
+        } else if (score >= 60) {
+            return "맛있는 떡국 완성 ! 올해에도 지금처럼 좋은 관계를 유지해 보세요.";
+        } else if (score >= 30) {
+            return "무난한 떡국을 끓였네요. 깊은 맛을 내려면 정성이 필요해요.";
+        } else if (score >= 0) {
+            return "떡국 간이 부족해요. 심심한 관계에 새로운 자극이 필요해요.";
+        } else {
+            log.error("점수가 0 점 미만이 되었습니다.");
+            throw new NyException(HttpStatus.BAD_REQUEST, "점수가 0점 미만이 될 수는 없을텐데..");
+        }
     }
 }

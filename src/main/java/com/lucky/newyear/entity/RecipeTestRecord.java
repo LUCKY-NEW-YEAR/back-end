@@ -1,6 +1,8 @@
 package com.lucky.newyear.entity;
 
 import com.lucky.newyear.entity.compositeKey.RecipeTestRecordId;
+import com.lucky.newyear.model.Recipe;
+import com.lucky.newyear.utill.RecipeConverter;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -25,6 +27,10 @@ public class RecipeTestRecord {
 
     @Column(name = "score")
     private Integer score;
+
+    @Column(name = "recipe")
+    @Convert(converter = RecipeConverter.class)
+    private Recipe recipe;
 
     @Column(name = "nickname")
     private String nickname;

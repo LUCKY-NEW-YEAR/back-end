@@ -1,8 +1,6 @@
 package com.lucky.newyear.model.enums;
 
-import com.lucky.newyear.utill.NyException;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,33 +9,43 @@ import java.util.stream.Stream;
 
 @Getter
 public enum IngredSubType {
-    GARAE_TTEOK("굴", 0, 2),
-    WHOLE_TTEOK("미역", 0, 4),
-    JORAENGI_TTEOK("소고기", 0, 1),
-    HONEY_TTEOK("닭고기", 0, 3),
-    KIMCHI_MANDU("새우", 0, 5),
-    MEAT_MANDU("꼬지", 1, 6),
-    GULRIM_MANDU("탕후루", 2, 7);
+    GUL(1, "굴", 0, 2),
+    MIYEOK(2, "미역", 0, 4),
+    SOGOGI(3, "소고기", 0, 1),
+    DAK(4, "닭고기", 0, 3),
+    SAEWOO(5, "새우", 0, 5),
+    GGOJI(6, "꼬지", 1, 6),
+    HURU(7, "탕후루", 2, 7);
 
+    private static final Map<Integer, IngredSubType> intToStringMap = new HashMap<>();
+
+    static {
+        // String -> Long 변환 테이블 생성
+        for (IngredSubType type : values()) {
+            intToStringMap.put(type.getId(), type);
+        }
+    }
+
+    private final Integer id;       // id 필드 맨 앞에 배치
     private final String coreName;
     private final Integer combi1;   // 꼬지, 탕후루 존재 시 감점, 모두 존재시 상점
     private final Integer priority;  // 네이밍 우선순위
 
     public static final int SIZE = values().length;
 
-    IngredSubType(String coreName, Integer combi1, Integer priority) {
+    IngredSubType(Integer id, String coreName, Integer combi1, Integer priority) {
+        this.id = id;
         this.coreName = coreName;
         this.combi1 = combi1;
         this.priority = priority;
     }
 
-    public static IngredSubType getIngredientByDescript(String descript) {
-        for (IngredSubType ingredient : values()) {
-            if (ingredient.coreName.equals(descript)) {
-                return ingredient;
-            }
-        }
-        return null;
+    public static IngredSubType fromId(int id) {
+        return intToStringMap.get(id);
+    }
+
+    public static List<IngredSubType> fromIds(List<Integer> idList) {
+        return idList.stream().map(intToStringMap::get).toList();
     }
 
     public static Integer calculSubScore(List<IngredSubType> ownersList, List<IngredSubType> testersList) {
@@ -60,20 +68,20 @@ public enum IngredSubType {
     }
 
     public static String getSubName(List<IngredSubType> ownersList, List<IngredSubType> testersList) {
-        List<Long> freqList = new ArrayList<>(Collections.nCopies(SIZE, 0L));
+        List<Long> countList = new ArrayList<>(Collections.nCopies(SIZE, 0L));
 
         Stream.concat(ownersList.stream(), testersList.stream())
                 .forEach(ingred -> {
-                    int com1Idx = ingred.getCombi1();
-                    long value = freqList.get(com1Idx);
+                    int idx = ingred.getId()-1;
+                    long value = countList.get(idx);
 
                     // 해당 값 증가시키기
-                    freqList.set(com1Idx, value + 1);
+                    countList.set(idx, value + 1);
                 });
 
-        int maxIndex = IntStream.range(0, freqList.size())
+        int maxIndex = IntStream.range(0, countList.size())
                 .boxed()
-                .max(Comparator.comparing(freqList::get))
+                .max(Comparator.comparing(countList::get))
                 .orElse(0);
 
         return IngredSubType.values()[maxIndex].getCoreName();

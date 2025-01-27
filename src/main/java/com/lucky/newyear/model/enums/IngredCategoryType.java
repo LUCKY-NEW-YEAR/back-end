@@ -1,5 +1,8 @@
 package com.lucky.newyear.model.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 // 재료 카테고리
 public enum IngredCategoryType {
     BROTH("육수", 8),
@@ -9,6 +12,7 @@ public enum IngredCategoryType {
 
     private final String name;
     private final int typeCount;
+
 
     IngredCategoryType(String name, int typeCount) {
         this.name = name;
