@@ -1,5 +1,8 @@
 package com.lucky.newyear.model;
 
+import com.lucky.newyear.model.enums.IngredGarnishType;
+import com.lucky.newyear.model.enums.IngredMainType;
+import com.lucky.newyear.model.enums.IngredSubType;
 import com.lucky.newyear.model.enums.IngredYuksuType;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -34,15 +37,15 @@ public class Recipe {
         ).toList();
 
         List<Integer> intMain = mainList.stream().map(
-                main -> IngredYuksuType.valueOf(main.toUpperCase()).getId()
+                main -> IngredMainType.valueOf(main.toUpperCase()).getId()
         ).toList();
 
         List<Integer> intSub = subList.stream().map(
-                sub -> IngredYuksuType.valueOf(sub.toUpperCase()).getId()
+                sub -> IngredSubType.valueOf(sub.toUpperCase()).getId()
         ).toList();
 
         List<Integer> intGarnish = garnishList.stream().map(
-                garnish -> IngredYuksuType.valueOf(garnish.toUpperCase()).getId()
+                garnish -> IngredGarnishType.valueOf(garnish.toUpperCase()).getId()
         ).toList();
 
         return Recipe.builder()
