@@ -72,7 +72,6 @@ public class RecipeTestService {
         // UUID 발급 후. url 제작. 형식은 properties에서 받아오고.
         return RecipeTestPostRes.builder()
                 .userUUID(uuidStr)
-                .shareUrl(shareUrl)
                 .build();
     }
 
@@ -85,13 +84,21 @@ public class RecipeTestService {
     }
 
     @Transactional
-    public RecipeTestGradeRes gradeRecipeTest(String ownerUUID, RecipeTestGradeReq recipeTestGradeReq) {
+    public RecipeTestGradeRes gradeRecipeTest(
+            final String ownerUUID,
+            final RecipeTestGradeReq recipeTestGradeReq
+    ) {
         // 우선은 자기 자신 레시피에 접근해도 괜찮을듯.
         String reqUserUUID = UserContext.getUserUUID();
 
+        if (reqUserUUID == null) {
+            UUID uuid = UUID.randomUUID();
+            reqUserUUID = uuid.toString();
+        }
+
         RecipeTest recipeTest = recipeTestRepo.findByOwnerUUID(ownerUUID)
                 .orElseThrow(() -> {
-                    log.error("gradeRecipeTest() 없는 테스트로의 접근입니다. reqUserUUID : {}", reqUserUUID);
+                    log.error("gradeRecipeTest() 없는 테스트로의 접근입니다. ownerUUID : {}", ownerUUID);
                     return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
                 });
 
@@ -147,9 +154,11 @@ public class RecipeTestService {
         List<RecipeTestRecord> topRankList = recipeTestRecordRepo.findTop4ByIdTestIdOrderByScoreDesc(recipeTest.getId());
 
         return RecipeTestGradeRes.of(
+                reqUserUUID,
                 score,
                 content,
-                topRankList
+                topRankList,
+                mergeRecipe
         );
     }
 
@@ -193,4 +202,5 @@ public class RecipeTestService {
             throw new NyException(HttpStatus.BAD_REQUEST, "점수가 0점 미만이 될 수는 없을텐데..");
         }
     }
+
 }
