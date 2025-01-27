@@ -17,6 +17,7 @@ import java.util.List;
 public class RecipeTestGetDetailRes {
     private final String userUUID;
     private final Integer score;
+    private final String title;
     private final String content;
     private final String message;
 
@@ -47,6 +48,7 @@ public class RecipeTestGetDetailRes {
         return RecipeTestGetDetailRes.builder()
                 .userUUID(record.getId().getUserUUID())
                 .score(record.getScore())
+                .title(record.getTitle())
                 .message(record.getMessage())
                 .yuksu(stringYuksu)
                 .main(stringMain)

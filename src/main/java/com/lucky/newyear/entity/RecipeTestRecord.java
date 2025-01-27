@@ -28,6 +28,9 @@ public class RecipeTestRecord {
     @Column(name = "score")
     private Integer score;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "recipe")
     @Convert(converter = RecipeConverter.class)
     private Recipe recipe;

@@ -110,6 +110,10 @@ public class RecipeTestService {
                 recipeTest.getRecipe(),
                 recipeTestGradeReq.toRecipe()
         );
+        String title = getTitle(
+                recipeTest.getRecipe(),
+                recipeTestGradeReq.toRecipe()
+        );
 
         // DB 저장
         RecipeTestRecordId id = new RecipeTestRecordId(
@@ -126,6 +130,7 @@ public class RecipeTestService {
                 .id(id)
                 .recipeTest(recipeTest)
                 .score(score)
+                .title(title)
                 .recipe(mergeRecipe)
                 .nickname(recipeTestGradeReq.getNickname())
                 .message(recipeTestGradeReq.getMessage())
@@ -141,6 +146,7 @@ public class RecipeTestService {
 
         return RecipeTestGradeRes.of(
                 score,
+                title,
                 content,
                 topRankList,
                 mergeRecipe
@@ -169,6 +175,20 @@ public class RecipeTestService {
         );
 
         return score;
+    }
+
+    private String getTitle(Recipe ownerRecipe, Recipe testerRecipe) {
+        String titleYuksu = IngredYuksuType.getYuksuName(
+                IngredYuksuType.firstFromIds(ownerRecipe.getYuksu()),
+                IngredYuksuType.firstFromIds(testerRecipe.getYuksu())
+        );
+
+        String titleSub = IngredSubType.getSubName(
+                IngredSubType.fromIds(ownerRecipe.getSub()),
+                IngredSubType.fromIds(testerRecipe.getSub())
+        );
+
+        return String.format("%s %s 떡국",titleYuksu, titleSub);
     }
 
     private String getContent(Integer score) {
