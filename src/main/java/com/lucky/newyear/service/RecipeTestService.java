@@ -250,6 +250,6 @@ public class RecipeTestService {
                     return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
                 });
 
-        return RecipeTestGetDetailRes.of(record, getContent(record.getScore()));
+        return RecipeTestGetDetailRes.of(record, ownerUUID, getContent(record.getScore()));
     }
 }

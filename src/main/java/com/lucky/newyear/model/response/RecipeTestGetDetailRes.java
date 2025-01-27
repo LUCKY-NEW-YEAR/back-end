@@ -15,10 +15,12 @@ import java.util.List;
 @Getter
 @Builder
 public class RecipeTestGetDetailRes {
+    private final String ownerUUID;
     private final String userUUID;
     private final Integer score;
     private final String title;
     private final String content;
+    private final String nickname;
     private final String message;
 
     private final List<String> yuksu;
@@ -29,6 +31,7 @@ public class RecipeTestGetDetailRes {
 
     public static RecipeTestGetDetailRes of(
             RecipeTestRecord record,
+            String ownerUUID,
             String content
     ) {
 
@@ -46,9 +49,11 @@ public class RecipeTestGetDetailRes {
                 .toList();
 
         return RecipeTestGetDetailRes.builder()
+                .ownerUUID(ownerUUID)
                 .userUUID(record.getId().getUserUUID())
                 .score(record.getScore())
                 .title(record.getTitle())
+                .nickname(record.getNickname())
                 .message(record.getMessage())
                 .yuksu(stringYuksu)
                 .main(stringMain)
