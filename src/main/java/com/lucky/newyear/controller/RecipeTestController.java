@@ -70,7 +70,7 @@ public class RecipeTestController {
     @GetMapping("/{ownerUUID}/detail")  //
     public ResponseEntity<RecipeTestGetDetailRes> getRecipeTestDetail(
             @PathVariable final String ownerUUID,
-            @RequestParam() final Long findId
+            @RequestParam final Long findId
     ) {
         RecipeTestGetDetailRes response = recipeTestService.getRecipeTestDetail(ownerUUID, findId);
 
