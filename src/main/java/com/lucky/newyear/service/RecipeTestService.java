@@ -13,6 +13,7 @@ import com.lucky.newyear.model.response.*;
 import com.lucky.newyear.model.request.RecipeTestPostReq;
 import com.lucky.newyear.repository.RecipeTestRecordRepository;
 import com.lucky.newyear.repository.RecipeTestRepository;
+import com.lucky.newyear.utill.EncryptUtil;
 import com.lucky.newyear.utill.NyException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,9 @@ public class RecipeTestService {
     @Value("${newyear.tester.count.max}")
     private Long TESTER_COUNT_MAX;
 
+    @Value("${newyear.aes.encryption.key}")
+    private String AES_KEY;
+
     public RecipeTestPostRes postRecipeTest(RecipeTestPostReq recipeTestPostReq) {
         // user의 UUID 생성
         UUID uuid = UUID.randomUUID();
@@ -52,7 +56,7 @@ public class RecipeTestService {
 
         // 그냥 입력사항 저장
         try {
-            RecipeTest recipeTest = recipeTestPostReq.toEntity(uuidStr);
+            RecipeTest recipeTest = recipeTestPostReq.toEntity(uuidStr, AES_KEY);
 
             recipeTestRepo.save(recipeTest);
         } catch (DataIntegrityViolationException e) {
@@ -126,13 +130,15 @@ public class RecipeTestService {
                 recipeTestGradeReq.toRecipe()
         );
 
+        String nicknameEnc = EncryptUtil.encrypt(recipeTestGradeReq.getNickname(), AES_KEY);
+
         RecipeTestRecord recipeTestRecord = RecipeTestRecord.builder()
                 .id(id)
                 .recipeTest(recipeTest)
                 .score(score)
                 .title(title)
                 .recipe(mergeRecipe)
-                .nickname(recipeTestGradeReq.getNickname())
+                .nicknameEnc(nicknameEnc)
                 .message(recipeTestGradeReq.getMessage())
                 .build();
 
@@ -150,6 +156,7 @@ public class RecipeTestService {
                 title,
                 content,
                 topRankList,
+                AES_KEY,
                 mergeRecipe
         );
     }
@@ -230,7 +237,7 @@ public class RecipeTestService {
 
         Page<RecipeTestRecord> recordPage = recipeTestRecordRepo.findAllByIdTestId(pageable, testId);
 
-        return RecipeTestRankRes.of(recordPage);
+        return RecipeTestRankRes.of(recordPage, AES_KEY);
     }
 
     public RecipeTestGetDetailRes getRecipeTestDetail(String ownerUUID, String findUUID) {
@@ -250,6 +257,6 @@ public class RecipeTestService {
                     return new NyException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
                 });
 
-        return RecipeTestGetDetailRes.of(record, ownerUUID, getContent(record.getScore()));
+        return RecipeTestGetDetailRes.of(record, ownerUUID, getContent(record.getScore()), AES_KEY);
     }
 }

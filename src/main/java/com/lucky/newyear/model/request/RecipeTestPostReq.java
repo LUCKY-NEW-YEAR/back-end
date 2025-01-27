@@ -3,6 +3,7 @@ package com.lucky.newyear.model.request;
 
 import com.lucky.newyear.entity.RecipeTest;
 import com.lucky.newyear.model.Recipe;
+import com.lucky.newyear.utill.EncryptUtil;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -25,7 +26,7 @@ public class RecipeTestPostReq {
     @Size(max = 3, message = "고명 재료는 3개 이하로 선택해야 합니다.")
     private final List<String> garnish;
 
-    public RecipeTest toEntity(String newUUID) {
+    public RecipeTest toEntity(String newUUID, String key) {
         Recipe recipe = Recipe.of(
                 yuksu,
                 main,
@@ -33,9 +34,11 @@ public class RecipeTestPostReq {
                 garnish
         );
 
+        String nicknameEnc = EncryptUtil.encrypt(this.nickname, key);
+
         return RecipeTest.builder()
                 .ownerUUID(newUUID)
-                .nickname(this.nickname)
+                .nicknameEnc(nicknameEnc)
                 .recipe(recipe)
                 .testerCount(0)
                 .build();

@@ -7,6 +7,7 @@ import com.lucky.newyear.model.enums.IngredGarnishType;
 import com.lucky.newyear.model.enums.IngredMainType;
 import com.lucky.newyear.model.enums.IngredSubType;
 import com.lucky.newyear.model.enums.IngredYuksuType;
+import com.lucky.newyear.utill.EncryptUtil;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -32,7 +33,8 @@ public class RecipeTestGetDetailRes {
     public static RecipeTestGetDetailRes of(
             RecipeTestRecord record,
             String ownerUUID,
-            String content
+            String content,
+            String key
     ) {
 
         List<String> stringYuksu = record.getRecipe().getYuksu().stream()
@@ -48,12 +50,14 @@ public class RecipeTestGetDetailRes {
                 .map(id -> IngredGarnishType.fromId(id).name())
                 .toList();
 
+        String nicknameDec = EncryptUtil.decrypt(record.getNicknameEnc(), key);
+
         return RecipeTestGetDetailRes.builder()
                 .ownerUUID(ownerUUID)
                 .userUUID(record.getId().getUserUUID())
                 .score(record.getScore())
                 .title(record.getTitle())
-                .nickname(record.getNickname())
+                .nickname(nicknameDec)
                 .message(record.getMessage())
                 .yuksu(stringYuksu)
                 .main(stringMain)

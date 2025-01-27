@@ -9,5 +9,4 @@ public class NewyearApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NewyearApplication.class, args);
 	}
-
 }

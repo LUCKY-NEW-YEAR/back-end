@@ -24,7 +24,7 @@ public class RecipeTest {
     private String ownerUUID;
 
     @Column(name = "nickname")
-    private String nickname;
+    private String nicknameEnc;    // 암호화 필요.?
 
     @Column(name = "recipe")
     @Convert(converter = RecipeConverter.class)

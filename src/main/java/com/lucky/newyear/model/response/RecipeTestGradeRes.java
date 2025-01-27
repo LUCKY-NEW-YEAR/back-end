@@ -7,6 +7,7 @@ import com.lucky.newyear.model.enums.IngredGarnishType;
 import com.lucky.newyear.model.enums.IngredMainType;
 import com.lucky.newyear.model.enums.IngredSubType;
 import com.lucky.newyear.model.enums.IngredYuksuType;
+import com.lucky.newyear.utill.EncryptUtil;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,12 +40,12 @@ public class RecipeTestGradeRes {
             final String title,
             final String content,
             final List<RecipeTestRecord> topRankList,
+            final String key,
             final Recipe recipe
     ) {
         List<UserDtoForTopRank> topRankDtoList = topRankList.stream()
-                .map(UserDtoForTopRank::of)
+                .map(topRank -> UserDtoForTopRank.of(topRank, key))
                 .toList();
-
 
         List<String> stringYuksu = recipe.getYuksu().stream()
                 .map(id -> IngredYuksuType.fromId(id).name())

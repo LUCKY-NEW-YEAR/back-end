@@ -36,7 +36,7 @@ public class RecipeTestRecord {
     private Recipe recipe;
 
     @Column(name = "nickname")
-    private String nickname;
+    private String nicknameEnc;    // 암호화 필요.?
 
     @Column(name = "message")
     private String message;

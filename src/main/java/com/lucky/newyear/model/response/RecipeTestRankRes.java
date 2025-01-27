@@ -17,9 +17,9 @@ public class RecipeTestRankRes {
     private final Integer size;
     private final Integer totalPages;
 
-    public static RecipeTestRankRes of(Page<RecipeTestRecord> recordPage) {
+    public static RecipeTestRankRes of(Page<RecipeTestRecord> recordPage, String key) {
         List<UserDtoForRank> result = recordPage.getContent().stream()
-                .map(UserDtoForRank::of)
+                .map(rank -> UserDtoForRank.of(rank, key))
                 .toList();
 
         return RecipeTestRankRes.builder()
