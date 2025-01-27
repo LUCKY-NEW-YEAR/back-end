@@ -59,7 +59,7 @@ public class Recipe {
     public static Recipe merge(Recipe r1, Recipe r2) {
         Recipe mergedRecipe = new Recipe();
         // 중복 제거 후 병합
-        mergedRecipe.yuksu = mergeLists(r1.yuksu, r2.yuksu);
+        mergedRecipe.yuksu = List.of(IngredYuksuType.getMainYuksuId(r1.yuksu, r2.yuksu));
         mergedRecipe.main = mergeLists(r1.main, r2.main);
         mergedRecipe.sub = mergeLists(r1.sub, r2.sub);
         mergedRecipe.garnish = mergeLists(r1.garnish, r2.garnish);

@@ -73,4 +73,15 @@ public enum IngredYuksuType {
             return testers.getCoreName();
         }
     }
+
+    public static Integer getMainYuksuId(List<Integer> yuksu1Ids, List<Integer> yuksu2Ids) {
+        IngredYuksuType yuksu1 = fromId(yuksu1Ids.get(0));
+        IngredYuksuType yuksu2 = fromId(yuksu2Ids.get(0));
+
+        if (yuksu1.getPriority() <= yuksu2.getPriority()) {
+            return yuksu1.getId();
+        } else {
+            return yuksu2.getId();
+        }
+    }
 }
