@@ -1,6 +1,8 @@
 package com.lucky.newyear.model.enums;
 
+import com.lucky.newyear.utill.NyException;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,23 +69,69 @@ public enum IngredSubType {
         return score;
     }
 
+//    소고기 3 +미역 2 -> 미역
+//    소고기 3 +꼬지 6 -> 꼬지
+//    굴 1 + 새우 5 -> 새우
+//    미역 2 + 탕후루 7 -> 탕후루
+
     public static String getSubName(List<IngredSubType> ownersList, List<IngredSubType> testersList) {
+        List<IngredSubType> combinedList = new ArrayList<>();
+        combinedList.addAll(ownersList);
+        combinedList.addAll(testersList);
+
         List<Long> countList = new ArrayList<>(Collections.nCopies(SIZE, 0L));
+        long maxCount = 0;
 
-        Stream.concat(ownersList.stream(), testersList.stream())
-                .forEach(ingred -> {
-                    int idx = ingred.getPriority()-1;
-                    long value = countList.get(idx);
+        for (IngredSubType ingred : combinedList) {
+            int idx = ingred.getId() - 1;
+            long value = countList.get(idx) + 1;
 
-                    // 해당 값 증가시키기
-                    countList.set(idx, value + 1);
-                });
+            countList.set(idx, value);
 
-        int maxIndex = IntStream.range(0, countList.size())
-                .boxed()
-                .max(Comparator.comparing(countList::get))
-                .orElse(0);
+            if (maxCount < value) {
+                maxCount = value;
+            }
+        }
 
-        return IngredSubType.values()[maxIndex].getCoreName();
+        List<IngredSubType> maxSubTypeList = new ArrayList<>();
+
+        for (int i = 0; i < countList.size(); i++) {
+            long count = countList.get(i);
+            if (count >= maxCount) {
+                IngredSubType subType = IngredSubType.fromId(i+1);
+                maxSubTypeList.add(subType);
+            }
+        }
+
+        Integer mainId = getMainId(maxSubTypeList);
+
+        return IngredSubType.fromId(mainId).getCoreName();
     }
+
+    private static Integer getMainId(List<IngredSubType> maxSubTypeList) {
+        for (IngredSubType subType : maxSubTypeList) {
+            switch (subType) {
+                case GUL: // 굴
+                    if (maxSubTypeList.contains(SAEWOO))
+                        return subType.getId();
+                    break;
+                case MIYEOK: // 미역
+                    if (maxSubTypeList.contains(HURU))
+                        return subType.getId();
+                    break;
+                case SOGOGI: // 소고기
+                    if (maxSubTypeList.contains(MIYEOK))
+                        return subType.getId();
+                    else if (maxSubTypeList.contains(GGOJI))
+                        return subType.getId();
+                    break;
+            }
+        }
+        IngredSubType mainSubType = maxSubTypeList.stream()
+                .min(Comparator.comparingInt(IngredSubType::getPriority))
+                .orElseThrow(() -> new NyException(HttpStatus.INTERNAL_SERVER_ERROR, "서버측 오류입니다."));
+
+        return mainSubType.getId();
+    }
+
 }
