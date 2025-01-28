@@ -113,17 +113,17 @@ public enum IngredSubType {
             switch (subType) {
                 case GUL: // 굴
                     if (maxSubTypeList.contains(SAEWOO))
-                        return subType.getId();
+                        return SAEWOO.getId();
                     break;
                 case MIYEOK: // 미역
                     if (maxSubTypeList.contains(HURU))
-                        return subType.getId();
+                        return HURU.getId();
                     break;
                 case SOGOGI: // 소고기
                     if (maxSubTypeList.contains(MIYEOK))
-                        return subType.getId();
+                        return MIYEOK.getId();
                     else if (maxSubTypeList.contains(GGOJI))
-                        return subType.getId();
+                        return GGOJI.getId();
                     break;
             }
         }
