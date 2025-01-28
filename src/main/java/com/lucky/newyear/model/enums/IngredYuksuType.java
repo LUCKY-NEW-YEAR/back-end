@@ -2,6 +2,7 @@ package com.lucky.newyear.model.enums;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,22 +67,43 @@ public enum IngredYuksuType {
         return 50;
     }
 
-    public static String getYuksuName(IngredYuksuType owners, IngredYuksuType testers) {
-        if (owners.getPriority() <= testers.getPriority()) {
-            return owners.getCoreName();
-        } else {
-            return testers.getCoreName();
+//    마라+토마토 -> 토마토
+//    마라+해물 -> 해물
+//    사골+멸치 -> 멸치
+
+    private static IngredYuksuType getMainYuksuType(IngredYuksuType yuksu1, IngredYuksuType yuksu2) {
+        switch (yuksu1) {
+            case MARA :
+                if (yuksu2 == TOMATO || yuksu2 == HAEMUL)
+                    return yuksu2;
+                break;
+            case TOMATO, HAEMUL :
+                if (yuksu2 == MARA)
+                    return yuksu1;
+                break;
+            case SAGOL :
+                if (yuksu2 == HAEMUL)
+                    return yuksu2;
+                break;
+            case MYULCHI :
+                if (yuksu2 == SAGOL)
+                    return yuksu1;
+                break;
         }
+        if (yuksu1.getPriority() <= yuksu2.getPriority()) {
+            return yuksu1;
+        } else {
+            return yuksu2;
+        }
+    }
+    public static String getYuksuName(IngredYuksuType yuksu1, IngredYuksuType yuksu2) {
+        return getMainYuksuType(yuksu1, yuksu2).getCoreName();
     }
 
     public static Integer getMainYuksuId(List<Integer> yuksu1Ids, List<Integer> yuksu2Ids) {
         IngredYuksuType yuksu1 = fromId(yuksu1Ids.get(0));
         IngredYuksuType yuksu2 = fromId(yuksu2Ids.get(0));
 
-        if (yuksu1.getPriority() <= yuksu2.getPriority()) {
-            return yuksu1.getId();
-        } else {
-            return yuksu2.getId();
-        }
+        return getMainYuksuType(yuksu1, yuksu2).getId();
     }
 }

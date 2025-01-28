@@ -72,7 +72,7 @@ public enum IngredSubType {
 
         Stream.concat(ownersList.stream(), testersList.stream())
                 .forEach(ingred -> {
-                    int idx = ingred.getId()-1;
+                    int idx = ingred.getPriority()-1;
                     long value = countList.get(idx);
 
                     // 해당 값 증가시키기
