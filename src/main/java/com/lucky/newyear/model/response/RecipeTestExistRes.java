@@ -7,4 +7,5 @@ import lombok.Getter;
 @Builder
 public class RecipeTestExistRes {
     private final boolean isExists;
+    private final String ownerNickname;
 }

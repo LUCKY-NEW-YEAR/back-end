@@ -152,6 +152,7 @@ public class RecipeTestService {
 
         return RecipeTestGradeRes.of(
                 ownerUUID,
+                recipeTest.getNicknameEnc(),
                 score,
                 title,
                 content,
@@ -217,9 +218,17 @@ public class RecipeTestService {
     }
 
     public RecipeTestExistRes existRecipeTest(String ownerUUID) {
-        boolean isExists = recipeTestRepo.existsByOwnerUUID(ownerUUID);
+        RecipeTest recipeTest = recipeTestRepo.findByOwnerUUID(ownerUUID)
+                .orElse(null);
+
+        boolean isExists = recipeTest != null;
+        String ownerNickname = null;
+        if (isExists == true) {
+            ownerNickname = EncryptUtil.decrypt(recipeTest.getNicknameEnc(), AES_KEY);
+        }
 
         return RecipeTestExistRes.builder()
+                .ownerNickname(ownerNickname)
                 .isExists(isExists)
                 .build();
     }

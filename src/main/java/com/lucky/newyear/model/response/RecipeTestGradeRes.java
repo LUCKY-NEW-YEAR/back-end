@@ -19,6 +19,7 @@ import java.util.List;
 public class RecipeTestGradeRes {
     // 본인 점수 계산 + 랭킹 조회 + 되면 등수도 표시 ㄱ?
     private final String ownerUUID;
+    private final String ownerNickname;
 
     private final Integer myScore;
 
@@ -36,6 +37,7 @@ public class RecipeTestGradeRes {
 
     public static RecipeTestGradeRes of(
             final String ownerUUID,
+            final String ownerNicknameEnc,
             final Integer myScore,
             final String title,
             final String content,
@@ -62,6 +64,7 @@ public class RecipeTestGradeRes {
 
         return RecipeTestGradeRes.builder()
                 .ownerUUID(ownerUUID)
+                .ownerNickname(EncryptUtil.decrypt(ownerNicknameEnc, key))
                 .myScore(myScore)
                 .title(title)
                 .content(content)
